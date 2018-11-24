@@ -11,7 +11,7 @@ const options = {
   outDir: './dist/public',
   outFile: 'index.html',
   cache: false,
-  minify: false,
+  minify: true,
   target: 'browser',
   sourceMaps: false
 };
