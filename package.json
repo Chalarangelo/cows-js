@@ -1,5 +1,5 @@
 {
-  "name": "milkfish",
+  "name": "cows-js",
   "version": "1.0.0",
   "description": "The simple WebSockets chatroom application.",
   "main": "server.js",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Chalarangelo/milkfish.git"
+    "url": "git+https://github.com/Chalarangelo/cows-js.git"
   },
   "keywords": [
     "websockets",
@@ -19,9 +19,9 @@
   "author": "Angelos Chalaris (chalarangelo@gmail.com)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Chalarangelo/milkfish/issues"
+    "url": "https://github.com/Chalarangelo/cows-js/issues"
   },
-  "homepage": "https://github.com/Chalarangelo/milkfish#readme",
+  "homepage": "https://github.com/Chalarangelo/cows-js#readme",
   "dependencies": {
     "@babel/core": "^7.1.6",
     "@babel/preset-env": "^7.1.6",
