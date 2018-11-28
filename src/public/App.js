@@ -1,4 +1,8 @@
 import React, { Component } from 'react';
+import LoginForm from './components/LoginForm';
+import ChatContainer from './components/ChatContainer';
+
+
 //import logo from './logo.svg';
 //import './App.css';
 
@@ -7,23 +11,25 @@ class App extends Component {
   constructor(props) {
     super(props);
     this._isMounted = false;
-    let host = window.location.host;
+    let host = window.location.host; 
     this.state = {
       host: host,
       connection: undefined,
       messages: [],
-      inputValue: ''
+      username: undefined,
+      usernameTaken: false
     };
     this.sendMessage = this.sendMessage.bind(this);
     this.receiveMessage = this.receiveMessage.bind(this);
+    this.setUsername = this.setUsername.bind(this);
   }
 
   componentDidMount() {
     this._isMounted = true;
-    let connection = new WebSocket(`ws://${this.state.host}`);
-    connection.onopen = () => connection.send('Hello, I am a client!');
-    connection.onmessage = this.receiveMessage;
-    this.setState(state => ({ connection: connection }));
+    // let connection = new WebSocket(`ws://${this.state.host}`);
+    // connection.onopen = () => connection.send('Hello, I am a client!');
+    // connection.onmessage = this.receiveMessage;
+    // this.setState(state => ({ connection: connection }));
   }
 
   componentWillUnmount() {
@@ -35,28 +41,51 @@ class App extends Component {
       this.setState(state => ({ messages: [...state.messages, message.data] }));
   }
 
-  sendMessage(){
-    let message = this.state.inputValue;
-    this.state.connection.send(message);
-    this.setState(state => ({ inputValue: '' }));
+  sendMessage(data){
+    this.state.connection.send(data);
   }
 
-  updateInputValue(value) {
-    console.log(value);
-    this.setState(state => ({ inputValue: value }));
+  setUsername(username) {
+    fetch(`/users`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8'
+      },
+      body: JSON.stringify({
+        username: username
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.username) {
+        let connection = new WebSocket(`ws://${this.state.host}`);
+        connection.onopen = () => connection.send(`Hello, I am ${data.username}!`);
+        connection.onmessage = this.receiveMessage;
+        this.setState({ 
+          username: data.username, 
+          usernameTaken: !data.username ,
+          connection: connection
+        });
+      }
+      else {
+        this.setState({ usernameTaken: true });
+      }
+    });
   }
 
   render() {
     return (
-      <div className="App">
-        <label htmlFor="message-input">Message:</label>
-        <input value={this.state.inputValue} onChange={evt => this.updateInputValue(evt.target.value)} id="message-input" name="message-input"/>
-        <br />
-        <button onClick={this.sendMessage} id="message-send">Send </button>
-        <ul id="message-list">
-          {this.state.messages.map((message, index) => <li key={index}> {message} </li>)}
-        </ul>
-      </div>
+      this.state.username === undefined 
+        ? 
+        <LoginForm 
+          setUsername={this.setUsername}
+          usernameTaken={this.state.usernameTaken}
+        />
+        :
+        <ChatContainer
+          sendMessage={this.sendMessage}
+          messages={this.state.messages}
+        />
     );
   }
 }

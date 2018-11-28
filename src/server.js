@@ -12,10 +12,14 @@ const argv = require('./modules/args').argv;
 const lineParser = require('./modules/lineParser');
 // Handle exit events appropriately
 const exitHandler = require('./modules/exitHandler')(argv);
+// Handle usernames
+const usernameHandler = require('./modules/usernameHandler');
+const router = require('./modules/router')(usernameHandler);
 
 // Create the express app, serve the contents of the `public` folder
 let app = express();
 app.use(express.static(path.join(__dirname,'public')));
+app.use('/', router);
 
 // Create the HTTP and WebSockets server
 const server = http.createServer(app);
@@ -30,7 +34,7 @@ socketServer.on('connection', (socket, request) => {
   // Handle received messages
   socket.on('message', message => {
     socketServer.clients.forEach(client => {
-      client.send(`${request.connection.remoteAddress}: ${message}`);
+      client.send(`${usernameHandler.findUsername(request.connection.remoteAddress)}: ${message}`);
     });
   });
 });

@@ -25,6 +25,7 @@
   "dependencies": {
     "@babel/core": "^7.1.6",
     "@babel/preset-env": "^7.1.6",
+    "body-parser": "^1.18.3",
     "chalk": "^2.4.1",
     "express": "^4.16.4",
     "parcel-bundler": "^1.10.3",
