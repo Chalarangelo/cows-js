@@ -13,7 +13,6 @@ const usernameHandler = {
     this.users = this.users.filter(u => u.username !== username);
   },
   findUsername(ip){
-    console.log(this.users);
     return this.users.filter(u => u.ip === ip)[0].username;
   }
 }

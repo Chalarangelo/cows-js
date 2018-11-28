@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './LoginForm.css';
 
 class LoginForm extends Component {
 
@@ -15,7 +16,7 @@ class LoginForm extends Component {
 
   render(){
     return (
-      <div>
+      <div className='login-form'>
         <h2>Pick a username</h2>
         <label htmlFor='username-input'>Username:</label>
         <input 
@@ -27,7 +28,8 @@ class LoginForm extends Component {
         {this.props.usernameTaken 
           ? <p>This username is not available!</p>
           : ''}
-        <button onClick={() => this.props.setUsername(this.state.inputValue)} id='set-username'>Connect</button>
+        <br/>
+        <button onClick={() => this.props.setUsername(this.state.inputValue)} id='set-username' className='login-button'>Connect</button>
       </div>
     );
   }

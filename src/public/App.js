@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
+import Header from './components/Header';
 import LoginForm from './components/LoginForm';
 import ChatContainer from './components/ChatContainer';
-
-
-//import logo from './logo.svg';
-//import './App.css';
+import './App.css';
 
 class App extends Component {
 
@@ -75,17 +73,22 @@ class App extends Component {
 
   render() {
     return (
-      this.state.username === undefined 
-        ? 
-        <LoginForm 
-          setUsername={this.setUsername}
-          usernameTaken={this.state.usernameTaken}
-        />
-        :
-        <ChatContainer
-          sendMessage={this.sendMessage}
-          messages={this.state.messages}
-        />
+      <div className='external-container'>
+        <Header></Header>
+        <div className='container'>
+          {this.state.username === undefined 
+            ? 
+            <LoginForm 
+              setUsername={this.setUsername}
+              usernameTaken={this.state.usernameTaken}
+            />
+            :
+            <ChatContainer
+              sendMessage={this.sendMessage}
+              messages={this.state.messages}
+            />}
+        </div>
+      </div>
     );
   }
 }

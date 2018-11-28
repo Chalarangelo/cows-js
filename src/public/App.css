@@ -1,0 +1,13 @@
+.external-container {
+  margin: 0;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-column-gap: 0.25rem;
+  position: absolute;
+  padding-top: 2rem; 
+  height: calc(100vh - 2rem);
+  width: 100%;
+}
