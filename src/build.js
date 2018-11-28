@@ -13,7 +13,8 @@ const options = {
   cache: false,
   minify: true,
   target: 'browser',
-  sourceMaps: false
+  sourceMaps: false,
+  contentHash: false
 };
 
 const es5 = babel({ presets: ['@babel/preset-env'] });

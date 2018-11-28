@@ -1,3 +1,5 @@
+[![Logo](/src/logos/splash.png)](https://github.com/Chalarangelo/cows-js)
+
 # Cows.js
 Chat over WebSockets using JavaScript.
 
