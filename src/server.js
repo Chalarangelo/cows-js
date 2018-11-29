@@ -23,13 +23,18 @@ app.use('/', router);
 
 // Create the HTTP and WebSockets server
 const server = http.createServer(app);
-const socketServer = new WebSocket.Server({ server });
+const socketServer = new WebSocket.Server({ 
+  server: server,
+  clientTracking: true
+});
 
 // Handle WebSockets events
 socketServer.on('connection', (socket, request) => {
   // Handle new connections
-  console.log(chalk.cyan(`Established connection with client on the following IP address: ${request.connection.remoteAddress}.`));
+  console.log(chalk.cyan(`Established connection with client on the following IP address: ${request.connection.remoteAddress}`));
   socket.send(`Hello there, I am the server!`);
+  socket.isAlive = true;
+  socket.ip = request.connection.remoteAddress;
 
   // Handle received messages
   socket.on('message', message => {
@@ -37,6 +42,29 @@ socketServer.on('connection', (socket, request) => {
       client.send(`${usernameHandler.findUsername(request.connection.remoteAddress)}: ${message}`);
     });
   });
+
+  // Send pings every 10 seconds, terminate clients that are not alive
+  setInterval(() => {
+    socketServer.clients.forEach(client => {
+      if(!client.isAlive) {
+        console.log(chalk.cyan(`Terminating connection with client on the following IP address: ${client.ip} - Cannot reach client at this time.`));
+        usernameHandler.removeUsername(usernameHandler.findUsername(client.ip));
+        return client.terminate();
+      } 
+      client.isAlive = false;
+      client.ping(null, false, true);
+    });
+  }, 1000);
+  // Handle pongs
+  socket.on('pong', () => { socket.isAlive = true; });
+
+  // Handle closing the connection
+  socket.on('close', (code, reason) => {
+    console.log(chalk.cyan(`Terminating connection with client on the following IP address: ${socket.ip} -${reason}(${code})`));
+    usernameHandler.removeUsername(usernameHandler.findUsername(socket.ip));
+    socket.terminate();
+  });
+
 });
 
 // Start the server on the specified port

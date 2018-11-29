@@ -27,11 +27,24 @@ class ChatContainer extends Component {
     if (event.key === 'Enter') this.processMessage();
   }
 
+  componentDidMount() {
+    this.scrollToBottom();
+  }
+
+  componentDidUpdate() {
+    this.scrollToBottom();
+  }
+
+  scrollToBottom() {
+    this.el.scrollIntoView({ behavior: 'smooth' });
+  }
+
   render() {
     return(
       <div className='chat-app'>
         <ul id='message-list' className='message-list'>
           {this.props.messages.map((message, index) => <Message key={index} data={message} />)}
+          <li ref={el => { this.el = el; }} />
         </ul>
         <div className='message-control'>
           <input 
