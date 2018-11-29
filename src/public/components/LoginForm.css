@@ -4,3 +4,7 @@
   text-align: center;
   padding: 0.5rem;
 }
+
+.error {
+  color: #b41111;
+}

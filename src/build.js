@@ -1,3 +1,4 @@
+const fs = require('fs');
 const Parcel = require('parcel-bundler');
 const rollup = require('rollup');
 const babel = require('rollup-plugin-babel');
@@ -39,6 +40,9 @@ async function build() {
   // Build backend
   const bBundler = await rollup.rollup(inputOptions);
   const bBundle = await bBundler.write(outputOptions);
+  // Prepend shebang to final file
+  let outputData = fs.readFileSync('./dist/server.js', 'utf8');
+  fs.writeFileSync('./dist/server.js', `#!/usr/bin/env node\n${outputData}`);
 
   // Build frontend
   await rimraf('.cache', () => { });

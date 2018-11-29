@@ -8,6 +8,9 @@
     "start": "node ./dist/server.js",
     "build": "node ./src/build.js"
   },
+  "bin": {
+    "cows-js": "./dist/server.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Chalarangelo/cows-js.git"

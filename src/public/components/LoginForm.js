@@ -26,7 +26,7 @@ class LoginForm extends Component {
           name='username-input' 
         />
         {this.props.usernameTaken 
-          ? <p>This username is not available!</p>
+          ? <p className='error'>This username is not available!</p>
           : ''}
         <br/>
         <button onClick={() => this.props.setUsername(this.state.inputValue)} id='set-username' className='login-button'>Connect</button>
