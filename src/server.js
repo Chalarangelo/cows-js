@@ -54,7 +54,7 @@ socketServer.on('connection', (socket, request) => {
       client.isAlive = false;
       client.ping(null, false, true);
     });
-  }, 1000);
+  }, 10000);
   // Handle pongs
   socket.on('pong', () => { socket.isAlive = true; });
 
