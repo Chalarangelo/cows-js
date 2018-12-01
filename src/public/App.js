@@ -3,6 +3,8 @@ import Header from './components/Header';
 import LoginForm from './components/LoginForm';
 import ChatContainer from './components/ChatContainer';
 import './App.css';
+import { MESSAGE_CODES } from '../config/messageCodes';
+import { MESSAGE_DESCRIPTORS } from '../config/messageDescriptors';
 
 class App extends Component {
 
@@ -24,10 +26,6 @@ class App extends Component {
 
   componentDidMount() {
     this._isMounted = true;
-    // let connection = new WebSocket(`ws://${this.state.host}`);
-    // connection.onopen = () => connection.send('Hello, I am a client!');
-    // connection.onmessage = this.receiveMessage;
-    // this.setState(state => ({ connection: connection }));
   }
 
   componentWillUnmount() {
@@ -42,7 +40,8 @@ class App extends Component {
   sendMessage(data){
     let message = {
       user: this.state.username,
-      message: data
+      message: data,
+      messageCode: MESSAGE_CODES.message
     };
     this.state.connection.send(JSON.stringify(message));
   }
@@ -64,7 +63,8 @@ class App extends Component {
         connection.onopen = () => {
           let connectionMessage = {
             user: data.username,
-            message: 'Connection established.'
+            message: MESSAGE_DESCRIPTORS.established,
+            messageCode: MESSAGE_CODES.system
           }
           connection.send(JSON.stringify(connectionMessage));
         }

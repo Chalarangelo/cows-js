@@ -15,6 +15,9 @@ const exitHandler = require('./modules/exitHandler')(argv);
 // Handle usernames
 const usernameHandler = require('./modules/usernameHandler');
 const router = require('./modules/router')(usernameHandler);
+// Grab message codes
+const { MESSAGE_CODES } = require('./config/messageCodes');
+const { MESSAGE_DESCRIPTORS } = require('./config/messageDescriptors');
 
 // Create the express app, serve the contents of the `public` folder
 let app = express();
@@ -32,10 +35,12 @@ const socketServer = new WebSocket.Server({
 socketServer.on('connection', (socket, request) => {
   // Handle new connections
   console.log(chalk.cyan(`Established connection with client on the following IP address: ${request.connection.remoteAddress}`));
+
   let welcomeMessage = {
-    user: 'SERVER',
-    message: 'Connection established.',
-    timestamp: new Date()
+    user: usernameHandler.findUsername(request.connection.remoteAddress),
+    message: MESSAGE_DESCRIPTORS.welcome,
+    timestamp: new Date(),
+    messageCode: MESSAGE_CODES.system
   }
   socket.send(JSON.stringify(welcomeMessage));
   socket.isAlive = true;
@@ -43,19 +48,21 @@ socketServer.on('connection', (socket, request) => {
 
   // Handle received messages
   socket.on('message', message => {
-    console.log(message);
     let user = usernameHandler.findUsername(request.connection.remoteAddress);
     let data = JSON.parse(message);
     if(user !== data.user) {
-      console.log(chalk.yellow(`Bogus request from IP: ${request.connection.remoteAddress} - Terminating connection...`));
-      socket.terminate();
+      console.log(chalk.yellow(`Bogus request from IP: ${request.connection.remoteAddress}`));
     }
     // Broadcast to everyone
     socketServer.clients.forEach(client => {
       let broadcastData = {
         user: user,
         message: data.message,
-        timestamp: new Date()
+        timestamp: new Date(),
+        messageCode: 
+          data.messageCode == MESSAGE_CODES.system && Object.values(MESSAGE_DESCRIPTORS).includes(data.message)
+          ? MESSAGE_CODES.system
+          : MESSAGE_CODES.message
       }
       client.send(JSON.stringify(broadcastData));
     });
@@ -66,8 +73,20 @@ socketServer.on('connection', (socket, request) => {
     socketServer.clients.forEach(client => {
       if(!client.isAlive) {
         console.log(chalk.cyan(`Terminating connection with client on the following IP address: ${client.ip} - Cannot reach client at this time.`));
-        usernameHandler.removeUsername(usernameHandler.findUsername(client.ip));
-        return client.terminate();
+        let user = usernameHandler.findUsername(socket.ip);
+        usernameHandler.removeUsername(user);
+        
+        client.terminate();
+
+        socketServer.clients.forEach(client => {
+          let broadcastData = {
+            user: user,
+            message: MESSAGE_DESCRIPTORS.terminated,
+            timestamp: new Date(),
+            messageCode: MESSAGE_CODES.system
+          }
+          client.send(JSON.stringify(broadcastData));
+        });
       } 
       client.isAlive = false;
       client.ping(null, false, true);
@@ -79,8 +98,20 @@ socketServer.on('connection', (socket, request) => {
   // Handle closing the connection
   socket.on('close', (code, reason) => {
     console.log(chalk.cyan(`Terminating connection with client on the following IP address: ${socket.ip} -${reason}(${code})`));
-    usernameHandler.removeUsername(usernameHandler.findUsername(socket.ip));
+    let user = usernameHandler.findUsername(socket.ip);
+    usernameHandler.removeUsername(user);
+
     socket.terminate();
+
+    socketServer.clients.forEach(client => {
+      let broadcastData = {
+        user: user,
+        message: MESSAGE_DESCRIPTORS.terminated,
+        timestamp: new Date(),
+        messageCode: MESSAGE_CODES.system
+      }
+      client.send(JSON.stringify(broadcastData));
+    });
   });
 
 });
