@@ -1,0 +1,31 @@
+.message {
+  display: inline-block;
+  padding: 0.5rem;
+  margin: 0.25rem 0.5rem;
+}
+
+.message .metadata {
+  display: block;
+  font-size: 0.65rem;
+  line-height: 1;
+  font-weight: 500;
+  color: #444;
+}
+
+.message .content {
+  display: block;
+}
+
+.message.system-message {
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #444;
+  display: block;
+  padding-bottom: 0;
+}
+
+.message:not(.system-message) {
+  border-radius: 0.25rem;
+  background: #f2f2f2;
+}

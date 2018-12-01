@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Message from './Message';
+import { MESSAGE_CODES } from '../../config/messageCodes';
 import './ChatContainer.css';
 
 class ChatContainer extends Component {
@@ -45,10 +46,15 @@ class ChatContainer extends Component {
   render() {
     return(
       <div className='chat-app'>
-        <ul id='message-list' className='message-list'>
-          {this.props.messages.map((message, index) => <Message key={index} data={message} />)}
-          <li ref={el => { this.el = el; }} />
-        </ul>
+        <div id='message-list' className='message-list'>
+          {this.props.messages.map((message, index) => 
+            <React.Fragment>
+              <Message key={index} data={message} />
+              {message.messageCode !== MESSAGE_CODES.system ? <br/> : ''}
+            </React.Fragment>
+            )}
+          <div ref={el => { this.el = el; }} />
+        </div>
         <div className='message-control'>
           <input 
             value={this.state.inputValue} 

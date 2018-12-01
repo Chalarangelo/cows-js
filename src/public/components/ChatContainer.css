@@ -6,7 +6,6 @@
 
 .message-list {
   height: calc(100% - 3rem);
-  list-style: none;
 }
 
 .message-control {
