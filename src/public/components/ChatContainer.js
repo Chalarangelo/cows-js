@@ -19,8 +19,10 @@ class ChatContainer extends Component {
   }
 
   processMessage() {
+    if(this.state.inputValue.trim().length == 0) return;
     this.props.sendMessage(this.state.inputValue);
     this.setState({ inputValue: '' });
+    this.messageInput.focus();
   }
 
   handleKeyPress (event) {
@@ -29,6 +31,7 @@ class ChatContainer extends Component {
 
   componentDidMount() {
     this.scrollToBottom();
+    this.messageInput.focus();
   }
 
   componentDidUpdate() {
@@ -55,6 +58,7 @@ class ChatContainer extends Component {
             className='input-message'
             placeholder='Type your message here...'
             onKeyPress={(event) => this.handleKeyPress(event)}
+            ref={(input) => { this.messageInput = input; }} 
           />
           <button 
             onClick={this.processMessage} 
