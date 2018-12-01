@@ -2,6 +2,7 @@
 const http = require('http');
 const process = require('process');
 const path = require('path');
+const fs = require('fs');
 // Import external dependencies
 const express = require('express');
 const WebSocket = require('ws');
@@ -15,6 +16,8 @@ const usernameHandler = require('./modules/usernameHandler');
 const router = require('./modules/router')(usernameHandler);
 // Handle command-line input
 const lineParser = require('./modules/lineParser')(usernameHandler);
+// Handle data logging
+const dataLogger = require('./modules/dataLogger');
 // Grab message codes
 const { MESSAGE_CODES } = require('./config/messageCodes');
 const { MESSAGE_DESCRIPTORS } = require('./config/messageDescriptors');
@@ -50,21 +53,19 @@ socketServer.on('connection', (socket, request) => {
   socket.on('message', message => {
     let user = usernameHandler.findUsername(request.connection.remoteAddress);
     let data = JSON.parse(message);
+    data.messageCode = data.messageCode == MESSAGE_CODES.system && Object.values(MESSAGE_DESCRIPTORS).includes(data.message)
+      ? MESSAGE_CODES.system
+      : MESSAGE_CODES.message;
+    data.timestamp = new Date();
+    if (data.messageCode === MESSAGE_CODES.message) {
+      dataLogger.logData('./data/messages.data', data);
+    }
     if(user !== data.user) {
       console.log(chalk.yellow(`Bogus request from IP: ${request.connection.remoteAddress}`));
     }
     // Broadcast to everyone
     socketServer.clients.forEach(client => {
-      let broadcastData = {
-        user: user,
-        message: data.message,
-        timestamp: new Date(),
-        messageCode: 
-          data.messageCode == MESSAGE_CODES.system && Object.values(MESSAGE_DESCRIPTORS).includes(data.message)
-          ? MESSAGE_CODES.system
-          : MESSAGE_CODES.message
-      }
-      client.send(JSON.stringify(broadcastData));
+      client.send(JSON.stringify(data));
     });
   });
 
@@ -115,6 +116,10 @@ socketServer.on('connection', (socket, request) => {
   });
 
 });
+
+if (!fs.existsSync('./data')) {
+  fs.mkdirSync('./data');
+}
 
 // Start the server on the specified port
 server.listen(argv.port, () => {

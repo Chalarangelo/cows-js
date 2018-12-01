@@ -34,7 +34,9 @@ class App extends Component {
 
   receiveMessage(message) {
     if(this._isMounted)
-      this.setState(state => ({ messages: [...state.messages, JSON.parse(message.data)] }));
+      this.setState(state => ({ 
+        messages: [...state.messages, JSON.parse(message.data)]
+      }));
   }
 
   sendMessage(data){
