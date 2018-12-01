@@ -32,14 +32,32 @@ const socketServer = new WebSocket.Server({
 socketServer.on('connection', (socket, request) => {
   // Handle new connections
   console.log(chalk.cyan(`Established connection with client on the following IP address: ${request.connection.remoteAddress}`));
-  socket.send(`Hello there, I am the server!`);
+  let welcomeMessage = {
+    user: 'SERVER',
+    message: 'Connection established.',
+    timestamp: new Date()
+  }
+  socket.send(JSON.stringify(welcomeMessage));
   socket.isAlive = true;
   socket.ip = request.connection.remoteAddress;
 
   // Handle received messages
   socket.on('message', message => {
+    console.log(message);
+    let user = usernameHandler.findUsername(request.connection.remoteAddress);
+    let data = JSON.parse(message);
+    if(user !== data.user) {
+      console.log(chalk.yellow(`Bogus request from IP: ${request.connection.remoteAddress} - Terminating connection...`));
+      socket.terminate();
+    }
+    // Broadcast to everyone
     socketServer.clients.forEach(client => {
-      client.send(`${usernameHandler.findUsername(request.connection.remoteAddress)}: ${message}`);
+      let broadcastData = {
+        user: user,
+        message: data.message,
+        timestamp: new Date()
+      }
+      client.send(JSON.stringify(broadcastData));
     });
   });
 

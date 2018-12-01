@@ -36,11 +36,15 @@ class App extends Component {
 
   receiveMessage(message) {
     if(this._isMounted)
-      this.setState(state => ({ messages: [...state.messages, message.data] }));
+      this.setState(state => ({ messages: [...state.messages, JSON.parse(message.data)] }));
   }
 
   sendMessage(data){
-    this.state.connection.send(data);
+    let message = {
+      user: this.state.username,
+      message: data
+    };
+    this.state.connection.send(JSON.stringify(message));
   }
 
   setUsername(username) {
@@ -57,7 +61,13 @@ class App extends Component {
     .then(data => {
       if (data.username) {
         let connection = new WebSocket(`ws://${this.state.host}`);
-        connection.onopen = () => connection.send(`Hello, I am ${data.username}!`);
+        connection.onopen = () => {
+          let connectionMessage = {
+            user: data.username,
+            message: 'Connection established.'
+          }
+          connection.send(JSON.stringify(connectionMessage));
+        }
         connection.onmessage = this.receiveMessage;
         this.setState({ 
           username: data.username, 
