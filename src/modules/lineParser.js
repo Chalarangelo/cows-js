@@ -1,13 +1,18 @@
 const readline = require('readline');
 
 // Handle command-line input
-let rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
+const lineParser = (usernameHandler) => {
+  let rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+  rl.on('line', function (line) {
+    let command = line.trim();
+    if (command === 'exit') process.exit(0);
+    if (command === 'users') console.log(usernameHandler.users);
+    // TODO: Format `users` nicely, add `help`, `kick <user>`
+  }); 
+  return rl;
+}
 
-rl.on('line', function (line) {
-  if (line.trim() === 'exit') process.exit(0);
-});
-
-module.exports = rl;
+module.exports = lineParser;

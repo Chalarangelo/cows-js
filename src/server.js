@@ -8,13 +8,13 @@ const WebSocket = require('ws');
 const chalk = require('chalk');
 // Command-line argument setup
 const argv = require('./modules/args').argv;
-// Handle command-line input
-const lineParser = require('./modules/lineParser');
 // Handle exit events appropriately
 const exitHandler = require('./modules/exitHandler')(argv);
 // Handle usernames
 const usernameHandler = require('./modules/usernameHandler');
 const router = require('./modules/router')(usernameHandler);
+// Handle command-line input
+const lineParser = require('./modules/lineParser')(usernameHandler);
 // Grab message codes
 const { MESSAGE_CODES } = require('./config/messageCodes');
 const { MESSAGE_DESCRIPTORS } = require('./config/messageDescriptors');
