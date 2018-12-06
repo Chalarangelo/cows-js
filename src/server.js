@@ -52,6 +52,7 @@ socketServer.on('connection', (socket, request) => {
   // Handle received messages
   socket.on('message', message => {
     let user = usernameHandler.findUsername(request.connection.remoteAddress);
+    if(user === null) return socket.terminate();
     let data = JSON.parse(message);
     data.messageCode = data.messageCode == MESSAGE_CODES.system && Object.values(MESSAGE_DESCRIPTORS).includes(data.message)
       ? MESSAGE_CODES.system
