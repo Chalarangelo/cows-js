@@ -5,7 +5,10 @@
 }
 
 .message-list {
-  height: calc(100% - 3rem);
+  /* height: calc(100% - 3rem); */
+  display: flex;
+  flex: 0 1 auto;
+  flex-flow: column wrap;
 }
 
 .message-control {

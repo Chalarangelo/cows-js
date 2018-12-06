@@ -49,7 +49,7 @@ class ChatContainer extends Component {
         <div id='message-list' className='message-list'>
           {this.props.messages.map((message, index) => 
             <React.Fragment key={message.timestamp}>
-              <Message data={message} />
+              <Message data={message} own={this.props.user === message.user}/>
               {message.messageCode !== MESSAGE_CODES.system ? <br/> : ''}
             </React.Fragment>
             )}

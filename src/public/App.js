@@ -98,6 +98,7 @@ class App extends Component {
             <ChatContainer
               sendMessage={this.sendMessage}
               messages={this.state.messages}
+              user={this.state.username}
             />}
         </div>
       </div>
