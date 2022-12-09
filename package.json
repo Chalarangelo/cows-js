@@ -30,7 +30,7 @@
     "@babel/preset-env": "^7.1.6",
     "body-parser": "^1.18.3",
     "chalk": "^2.4.1",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "parcel-bundler": "^1.10.3",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
